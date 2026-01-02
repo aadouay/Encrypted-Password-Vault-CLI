@@ -1,163 +1,134 @@
-🔐 Multi-User Encrypted Password Vault (CLI) – C++
+🔐 Single-User Encrypted Password Vault (CLI) – C++
 📌 Overview
 
-This project is a command-line password vault written in C++ that supports multiple users with session-based access control.
-Each user has a private encrypted storage space where passwords are securely stored and isolated from other users.
+This project is a command-line password vault written in C++ for a single local user.
+It allows the user to securely store, retrieve, and manage passwords by encrypting them before saving to a file and decrypting them only when needed.
 
-The project focuses on encryption fundamentals, file-based persistence, and session management, and was built as part of the 1337 (42 Network) Common Core learning path.
+The project focuses on encryption fundamentals, file-based persistence, and clean program structure, and was developed as part of the 1337 (42 Network) Common Core learning path.
 
 🎯 Project Goals
 
-Design a multi-user system in a CLI environment
+Understand how encrypted storage works
 
-Implement session-based user access
+Learn how to safely store sensitive data in files
 
-Encrypt sensitive data before persistent storage
+Practice structuring a real CLI application in C++
 
-Ensure data isolation per user
+Apply separation of responsibilities (logic, encryption, storage)
 
-Practice clean project architecture and responsibility separation
+Build a simple but realistic security-oriented project
 
-👤 User & Session Concept
-What Is a User?
+🧠 Core Concept
 
-A user represents an individual with:
+The application is designed for one trusted user
 
-A unique username
+All passwords are:
 
-A personal secret key used for encryption
+Encrypted before being written to disk
 
-Each user owns a private vault that cannot be accessed by others.
+Stored in a local file
 
-What Is a Session?
+Decrypted only in memory when accessed
 
-A session is an active logged-in state.
+Plain-text passwords are never stored
 
-When a user logs in:
+There is no multi-user system and no sessions, keeping the project simple and focused.
 
-A session starts
+⚙️ Functional Overview
+Password Management
 
-All actions apply only to that user
+The user can:
 
-Access to other users’ data is restricted
+Add a new password for a service
 
-Logging out ends the session and clears access.
+Retrieve a stored password
 
-🔐 Functional Overview
-User Management
+List all stored services
 
-Register a new user
+Delete a password entry
 
-Log in with existing credentials
+Encryption
 
-Log out to end the session
+Passwords are encrypted using a custom reversible encryption method
 
-Password Management (Per User)
-
-While logged in, a user can:
-
-Add a password (encrypted before storage)
-
-Retrieve a stored password (decrypted in memory)
-
-List stored services
-
-Delete stored entries
-
-🗂️ Data Storage Design
-
-Each user has isolated persistent storage.
-
-Example Layout
-data/
-├── users/
-│   ├── ayoub.vault
-│   ├── sara.vault
-│   └── ali.vault
-
-
-Each vault contains:
-
-service_name | encrypted_password
-
-
-Plain passwords are never written to disk.
-
-🧱 Project Architecture (Conceptual)
-Application Core
- ├── User Authentication
- ├── Session Management
- ├── Vault Management
- ├── Encryption Module
- └── File Storage System
-
-
-Each component has a single responsibility to keep the system modular and maintainable.
-
-🔒 Encryption Approach
-
-Passwords are encrypted using a custom reversible encryption algorithm
-
-The same user secret key is used for encryption and decryption
+The same secret key is used for encryption and decryption
 
 No hashing is used
 
 No third-party cryptographic libraries are involved
 
-⚠️ Encryption is implemented for educational purposes only.
+⚠️ The encryption logic is implemented for educational purposes only.
+
+🗂️ Data Storage
+
+Encrypted data is stored locally in a file.
+
+Example storage format:
+
+github | <encrypted_password>
+email  | <encrypted_password>
+
+
+The vault file never contains readable passwords
+
+Decryption happens only at runtime
+
+🧱 Project Architecture (Conceptual)
+Application
+ ├── CLI Interface
+ ├── Vault Manager
+ ├── Encryption Module
+ └── File Storage System
+
+
+Each component has a single responsibility, making the project easier to understand and maintain.
 
 📁 Project Structure
 password_vault/
 ├── src/
 │   ├── main.cpp          → program flow & CLI
-│   ├── Vault.cpp         → user vault operations
-│   ├── Session.cpp       → session handling
+│   ├── Vault.cpp         → password management
 │   ├── Crypto.cpp        → encryption logic
 │   └── Utils.cpp         → helper utilities
 ├── include/
 │   ├── Vault.hpp
-│   ├── Session.hpp
 │   ├── Crypto.hpp
 │   └── Utils.hpp
 ├── data/
-│   └── users/            → encrypted user vaults
+│   └── vault.dat         → encrypted password storage
 └── Makefile
 
 🧠 Learning Objectives
 
-Understand session lifecycle management
+Understand reversible encryption concepts
 
-Learn how encrypted storage works
+Learn how to protect data at rest
 
-Practice file-based data persistence
+Practice file I/O in C++
 
-Design a multi-user system
+Improve project organization and design
 
-Improve C++ project organization
+Build a real-world CLI utility
 
 🚨 Security Disclaimer
 
 This project is not intended for production use.
-The encryption method is implemented for learning and demonstration purposes only.
+The encryption method is implemented strictly for learning and demonstration purposes.
 
 📈 What This Project Demonstrates
 
-Strong C++ fundamentals
+Solid C++ fundamentals
 
-Systems and architectural thinking
+Clean project structure
 
 Awareness of security concepts
 
-Clean CLI application design
+Ability to design practical CLI tools
 
-Multi-user access control logic
+Clear and honest technical thinking
 
 👨‍💻 Author
 
 Ayoub Adouay
 Student at 1337 (42 Network)
 Interested in systems programming, security, and low-level software design
-
-🔗 LinkedIn Description (Short)
-
-Developed a multi-user encrypted password vault in C++ with session-based access control and isolated user storage as part of the 1337 Common Core.

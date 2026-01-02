@@ -1,30 +1,32 @@
-NAME    = password_manager
-CPP     = c++
-FLAGS   = -std=c++98 -Wall -Wextra -Werror
-RM      = rm -rf
+NAME      = password_vault
+CXX       = c++
+CXXFLAGS  = -std=c++98 -Wall -Wextra -Werror
+CPPFLAGS  = -Iinclude
+RM        = rm -f
 
-SRC     = src/main.cpp \
-          src/Vault.cpp \
-          src/PasswordEntry.cpp \
-          src/Crypto.cpp \
-          src/Utils.cpp \
+SRC_DIR   = src
+SRCS      = $(SRC_DIR)/main.cpp \
+			$(SRC_DIR)/Vault.cpp \
+			$(SRC_DIR)/Crypto.cpp \
+			$(SRC_DIR)/Utils.cpp
 
-OBJ     = $(SRC:.cpp=.o)
+OBJS      = $(SRCS:.cpp=.o)
+
+.PHONY: all clean fclean re
 
 all: $(NAME)
 
-$(NAME): $(OBJ)
-	$(CPP) $(FLAGS) -o $(NAME) $(OBJ)
+$(NAME): $(OBJS)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -o $@ $(OBJS)
 
 %.o: %.cpp
-	$(CPP) $(FLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $< -o $@
 
 clean:
-	$(RM) $(OBJ)
+	$(RM) $(OBJS)
 
 fclean: clean
 	$(RM) $(NAME)
 
 re: fclean all
 
-.PHONY: clean
