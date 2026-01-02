@@ -154,7 +154,7 @@ Multi-user access control logic
 
 👨‍💻 Author
 
-Ayoub Synard
+Ayoub Adouay
 Student at 1337 (42 Network)
 Interested in systems programming, security, and low-level software design
 
