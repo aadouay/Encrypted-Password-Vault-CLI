@@ -6,7 +6,6 @@ RM        = rm -f
 
 SRC_DIR   = src
 SRCS      = $(SRC_DIR)/main.cpp \
-			$(SRC_DIR)/Vault.cpp \
 			$(SRC_DIR)/Crypto.cpp \
 			$(SRC_DIR)/Utils.cpp
 
