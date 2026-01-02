@@ -1,103 +1,163 @@
-🔐 Secure Password Manager (CLI) – C++
+🔐 Multi-User Encrypted Password Vault (CLI) – C++
 📌 Overview
 
-This project is a command-line password manager developed in C++, designed to securely store, retrieve, and manage passwords locally.
-It uses a master password, hashing, and basic encryption to protect sensitive data and demonstrates fundamental security and system programming concepts.
+This project is a command-line password vault written in C++ that supports multiple users with session-based access control.
+Each user has a private encrypted storage space where passwords are securely stored and isolated from other users.
 
-This project was built as part of my learning journey in the 1337 (42 Network) Common Core.
+The project focuses on encryption fundamentals, file-based persistence, and session management, and was built as part of the 1337 (42 Network) Common Core learning path.
 
 🎯 Project Goals
 
-Understand how password managers work internally
+Design a multi-user system in a CLI environment
 
-Practice secure data storage principles
+Implement session-based user access
 
-Apply Object-Oriented Programming (OOP) in C++
+Encrypt sensitive data before persistent storage
 
-Work with file persistence and error handling
+Ensure data isolation per user
 
-Build a real-world CLI application from scratch
+Practice clean project architecture and responsibility separation
 
-⚙️ Features
+👤 User & Session Concept
+What Is a User?
 
-🔑 Master password authentication
+A user represents an individual with:
 
-🔒 Encrypted storage of passwords (no plain text)
+A unique username
 
-➕ Add new password entries
+A personal secret key used for encryption
 
-📋 List stored services
+Each user owns a private vault that cannot be accessed by others.
 
-🔍 Retrieve a password for a specific service
+What Is a Session?
 
-🗑️ Delete a password entry
+A session is an active logged-in state.
 
-💾 Persistent storage using encrypted files
+When a user logs in:
 
-🛠️ Technologies & Concepts Used
+A session starts
 
-Language: C++
+All actions apply only to that user
 
-Programming Paradigm: Object-Oriented Programming
+Access to other users’ data is restricted
 
-Concepts:
+Logging out ends the session and clears access.
 
-File I/O
+🔐 Functional Overview
+User Management
 
-Hashing & basic encryption
+Register a new user
 
-Input validation
+Log in with existing credentials
 
-Error handling
+Log out to end the session
 
-Memory management
+Password Management (Per User)
 
-Tools: Git, Makefile, Linux CLI
+While logged in, a user can:
 
-🧠 Architecture (Simplified)
+Add a password (encrypted before storage)
 
-/src
- ├── main.cpp
- ├── Vault.cpp / Vault.hpp
- ├── PasswordEntry.cpp / PasswordEntry.hpp
- ├── Crypto.cpp / Crypto.hpp
- └── Utils.cpp / Utils.hpp
+Retrieve a stored password (decrypted in memory)
 
-▶️ How to Use
-make
-./password_manager
+List stored services
+
+Delete stored entries
+
+🗂️ Data Storage Design
+
+Each user has isolated persistent storage.
+
+Example Layout
+data/
+├── users/
+│   ├── ayoub.vault
+│   ├── sara.vault
+│   └── ali.vault
 
 
-Example commands:
+Each vault contains:
 
-add github
-get github
-list
-delete github
+service_name | encrypted_password
 
-🚨 Security Notes
 
-This project is educational and not intended for production use
+Plain passwords are never written to disk.
 
-Encryption is implemented for learning purposes
+🧱 Project Architecture (Conceptual)
+Application Core
+ ├── User Authentication
+ ├── Session Management
+ ├── Vault Management
+ ├── Encryption Module
+ └── File Storage System
 
-No third-party crypto libraries are used to better understand the fundamentals
+
+Each component has a single responsibility to keep the system modular and maintainable.
+
+🔒 Encryption Approach
+
+Passwords are encrypted using a custom reversible encryption algorithm
+
+The same user secret key is used for encryption and decryption
+
+No hashing is used
+
+No third-party cryptographic libraries are involved
+
+⚠️ Encryption is implemented for educational purposes only.
+
+📁 Project Structure
+password_vault/
+├── src/
+│   ├── main.cpp          → program flow & CLI
+│   ├── Vault.cpp         → user vault operations
+│   ├── Session.cpp       → session handling
+│   ├── Crypto.cpp        → encryption logic
+│   └── Utils.cpp         → helper utilities
+├── include/
+│   ├── Vault.hpp
+│   ├── Session.hpp
+│   ├── Crypto.hpp
+│   └── Utils.hpp
+├── data/
+│   └── users/            → encrypted user vaults
+└── Makefile
+
+🧠 Learning Objectives
+
+Understand session lifecycle management
+
+Learn how encrypted storage works
+
+Practice file-based data persistence
+
+Design a multi-user system
+
+Improve C++ project organization
+
+🚨 Security Disclaimer
+
+This project is not intended for production use.
+The encryption method is implemented for learning and demonstration purposes only.
 
 📈 What This Project Demonstrates
 
-Strong understanding of C++ fundamentals
+Strong C++ fundamentals
 
-Awareness of security best practices
+Systems and architectural thinking
 
-Ability to design and structure a complete project
+Awareness of security concepts
 
-Experience building real-world CLI tools
+Clean CLI application design
+
+Multi-user access control logic
 
 👨‍💻 Author
 
-Ayoub Adouay
+Ayoub Synard
 Student at 1337 (42 Network)
-Passionate about systems programming, security, and low-level development
+Interested in systems programming, security, and low-level software design
 
-🔗 GitHub: (...)
-🔗 LinkedIn: (...)
+🔗 LinkedIn Description (Short)
+
+Developed a multi-user encrypted password vault in C++ with session-based access control and isolated user storage as part of the 1337 Common Core.
