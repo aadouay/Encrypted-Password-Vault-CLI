@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
-#include <algorithm>
+#include <cstdlib>
+#include <ctime>
 
 class Crypto {
     public:

@@ -1,4 +1,6 @@
 #include "Crypto.hpp"
+#include <iostream>
+#include <algorithm>
 
 std::string Crypto::encrypt(const std::string& data, const std::string& key){
     const int MIN_PRINT = 32;   // first printable char
@@ -20,10 +22,14 @@ std::string Crypto::encrypt(const std::string& data, const std::string& key){
 
     // reverse the encrypted string
     std::reverse(encrypted_pass.begin(), encrypted_pass.end());
+    // add a obfuscation layer by call an api serveress (should return a new encrypted string)
+    
     return encrypted_pass;
 }
 
 std::string Crypto::decrypt(const std::string& encryptedData, const std::string& key){
+
+    std::cout << "Warning : Before use cmd 'DEC' make sure that you use your own decryption function and use the serial ID for correct decryption" << std::endl;
     const int MIN_PRINT = 32;   // first printable char
     const int MAX_PRINT = 126;  // last printable char
     const int RANGE = MAX_PRINT - MIN_PRINT + 1;

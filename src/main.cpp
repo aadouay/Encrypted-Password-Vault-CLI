@@ -5,13 +5,37 @@
 
 int main(int ac, char** av) {
     std::cout << "Welcome to the Encrypted Password Vault CLI!" << std::endl;
+    std::srand(std::time(NULL));
+    if (ac != 4)
+    {
+        std::cout << "\n========================================\n";
+        std::cout << "🔐  Encrypted Password Vault - Usage\n";
+        std::cout << "========================================\n\n";
 
-    if(ac != 4){
-        std::cout << "Please Enter the key and value and method to encrypt it" << std::endl;
-        std::cout << "example:" << std::endl;
-        std::cout << "./password_vault Github  AJASD1234!@#$ ENC " << std::endl;
+        std::cout << "📖 USAGE:\n";
+        std::cout << "  ./password_vault <key> <value> <method>\n\n";
+
+        std::cout << "⚙️ METHODS:\n";
+        std::cout << "  ENC   🔒 Encrypt and store a password\n";
+        std::cout << "  DEC   🔓 Decrypt a password using a serial ID\n\n";
+
+        std::cout << "💡 EXAMPLES:\n";
+        std::cout << "  Encrypt:\n";
+        std::cout << "    ./password_vault Github AJASD1234!@#$ ENC\n\n";
+
+        std::cout << "  Decrypt:\n";
+        std::cout << "    ./password_vault Github <encrypted_value> DEC\n\n";
+
+        std::cout << "📝 NOTE:\n";
+        std::cout << "  - A serial ID is generated during encryption.\n";
+        std::cout << "  - Use your external script with the serial ID\n";
+        std::cout << "    before running the decryption process.\n\n";
+
+        std::cout << "========================================\n";
         return 1;
     }
+
+
     std::string key = av[1];
     std::string value = av[2];
     std::string method = av[3];
@@ -33,7 +57,12 @@ int main(int ac, char** av) {
     }
     // APPEND TO FILE
     if(method == "ENC"){
-        if(!Utils::addToFile(vaultPath, key, encrypted)){
+        // generate serial IDs
+        std::string serial_IDs = Utils::generateSerialIDs(5);
+        // encrypt with custom algorithm to add more security
+        encrypted = Utils::encreption_algorithm(encrypted, serial_IDs);
+        // add to file
+        if(!Utils::addToFile(vaultPath, key, encrypted, serial_IDs)){
             std::cout << "Error appending to vault file." << std::endl;
             return 1;
         }
