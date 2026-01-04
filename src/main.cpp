@@ -60,7 +60,7 @@ int main(int ac, char** av) {
         // generate serial IDs
         std::string serial_IDs = Utils::generateSerialIDs(5);
         // encrypt with custom algorithm to add more security
-        encrypted = Utils::encreption_algorithm(encrypted, serial_IDs);
+        encrypted = Utils::encryption_algorithm(encrypted, serial_IDs);
         // add to file
         if(!Utils::addToFile(vaultPath, key, encrypted, serial_IDs)){
             std::cout << "Error appending to vault file." << std::endl;

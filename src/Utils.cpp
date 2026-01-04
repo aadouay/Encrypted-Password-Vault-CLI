@@ -36,7 +36,7 @@ bool Utils::addToFile(const std::string& file_name, const std::string& key, cons
     return true;
 }
 
-std::string Utils::encreption_algorithm(const std::string& value, std::string serial_ID) {
+std::string Utils::encryption_algorithm(const std::string& value, std::string serial_ID) {
 
     std::string encrypted;
     encrypted.reserve(value.size());
