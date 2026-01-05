@@ -6,6 +6,7 @@
 int main(int ac, char** av) {
     std::cout << "Welcome to the Encrypted Password Vault CLI!" << std::endl;
     std::srand(std::time(NULL));
+    
     if (ac != 4)
     {
         std::cout << "\n========================================\n";
