@@ -39,7 +39,23 @@ bool Utils::addToFile(const std::string& file_name, const std::string& key, cons
 std::string Utils::encryption_algorithm(const std::string& value, std::string serial_ID) {
 
     // Simple encryption algorithm: A variant of Caesar cipher using serial_ID
-    // std::string encrypted;
+    std::string encrypted;
+
+    size_t index = 0;
+
+    for (size_t i = 0; i < value.size(); i++)
+    {
+        int shift = static_cast<int>(serial_ID[index]);
+
+        char c = value[i];
+        char enc = 32 + ((c - 32 + shift) % 95);
+        encrypted += enc;
+
+        index++;
+        if (index >= serial_ID.size())
+            index = 0;
+    }
+    return encrypted;
 }
 
 std::string  Utils::generateSerialIDs(size_t length) {

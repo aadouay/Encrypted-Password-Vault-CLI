@@ -1,348 +1,153 @@
-# 🔐 Encrypted Password Vault CLI
+## 🔐 Encrypted Password Vault CLI
 
-> A secure C++ command-line tool for storing and retrieving encrypted passwords with multi-layer encryption
+Simple C++98 command‑line tool to store and retrieve passwords in a local encrypted vault file.
 
----
+Passwords are encrypted with a key, obfuscated again with a short random serial ID, and then saved in data/vault.dat.
 
-## 📌 Project Overview
-
-The **Encrypted Password Vault CLI** is a robust password management system that implements a multi-layered encryption approach to securely store passwords locally. It combines custom encryption algorithms with serial ID-based obfuscation for enhanced security.
-
-### 🎯 Key Capabilities
-
-- 🔒 **Multi-Layer Encryption**: Uses custom shift-based cipher with additional obfuscation
-- 🆔 **Serial ID Generation**: Each encrypted password gets a unique serial identifier
-- 💾 **Persistent Storage**: Automatically creates and manages a vault file (`data/vault.dat`)
-- 🔑 **Key-Based Security**: Encrypt/decrypt using user-defined keys
-- 📝 **Multiple Entries**: Safely stores multiple passwords without data loss
-- ✅ **Printable Characters**: Ensures all encrypted data is safely printable (ASCII 32-126)
+> ⚠️ Educational/demo project – do not use for real sensitive data.
 
 ---
 
-## ⚡ Features
+## 🛠️ Build
 
-| Feature | Description |
-|---------|-------------|
-| 🔐 **Dual-Shift Encryption** | Uses first and last character of key for two-pass encryption |
-| 🔄 **String Reversal** | Adds an extra layer by reversing the encrypted string |
-| 🎲 **Random Serial IDs** | Generates 5-character random serial for additional obfuscation |
-| 📊 **Structured Storage** | Organized vault file with headers and formatted entries |
-| 🛡️ **Custom Algorithm** | Additional encryption layer using serial ID and position-based math |
+Requirements:
+- 🧱 Any C++ compiler with C++98 support
+- 🧰 make
 
----
-
-## 🛠️ Installation / Build
-
-### Prerequisites
-- C++ compiler with C++98 support
-- Make utility
-
-### Build Steps
-
+Build the main CLI:
 ```bash
-# Clone the repository
-git clone <your-repo-url>
-cd Encrypted-Password-Vault-CLI
-
-# Build the project
 make
-
-# Run the executable
-./password_vault
 ```
 
----
+This produces:
+- ./password_vault – main vault program
 
-## 💻 Usage
-
-### 1️⃣ Encrypt and Store a Password
-
+Build the standalone decrypt helper in dec/:
 ```bash
-./password_vault <KEY> <PASSWORD> ENC
+cd dec
+make
 ```
 
-**Example:**
-```bash
-./password_vault Github "MySecretPass123!" ENC
-```
-
-**Parameters:**
-- `KEY` → Your encryption key (used for decryption later)
-- `PASSWORD` → The password you want to store securely
-- `ENC` → Encryption mode
-
-**✅ Output:**
-```
-Encrypted value stored successfully.
-```
-
-The encrypted password is stored in [data/vault.dat](data/vault.dat) with a unique serial ID.
+This produces:
+- ./dec – helper that removes the serial‑ID layer only
 
 ---
 
-### 2️⃣ Decrypt a Password
+## ⚙️ How It Works
 
-```bash
-./password_vault <KEY> <ENCRYPTED_VALUE> DEC
-```
+When you encrypt, the program:
+1. 🔑 Encrypts the password using key‑based shifts and string reversal (Crypto).
+2. 🎲 Generates a 5‑character random serial ID (Utils::generateSerialIDs).
+3. 🧪 Applies another simple cipher using that serial ID (Utils::encryption_algorithm).
+4. 💾 Stores everything in data/vault.dat.
 
-**Example:**
-```bash
-./password_vault Github "xY9#mP..." DEC
-```
-
-**Parameters:**
-- `KEY` → The same key used during encryption
-- `ENCRYPTED_VALUE` → The encrypted string from the vault
-- `DEC` → Decryption mode
-
-**⚠️ Important:** Before decrypting, you need to:
-1. Extract the serial ID from the vault file
-2. Use your custom decryption function with the serial ID
-3. Then run the DEC command with the properly prepared encrypted value
-
----
-
-## 📂 Project Structure
-
-```
-Encrypted-Password-Vault-CLI/
-│
-├── 📁 src/
-│   ├── main.cpp          # 🖥️  CLI interface and argument handling
-│   ├── Crypto.cpp        # 🔐 Core encryption/decryption algorithms
-│   └── Utils.cpp         # 🛠️  File I/O and utility functions
-│
-├── 📁 include/
-│   ├── Crypto.hpp        # 🔐 Encryption/decryption class declarations
-│   └── Utils.hpp         # 🛠️  Utility functions declarations
-│
-├── 📁 data/
-│   └── vault.dat         # 💾 Password vault (auto-created)
-│
-├── Makefile              # 🔨 Build configuration
-└── README.md             # 📖 This file
-```
-
----
-
-## 🔐 Encryption Algorithm Explained
-
-### Layer 1: Dual-Shift Cipher
-```
-1. Extract key_shift1 from first character of key
-2. Extract key_shift2 from last character of key
-3. Apply first shift to all characters
-4. Apply second shift to the result
-5. Reverse the entire string
-```
-
-### Layer 2: Serial ID Obfuscation
-```
-For each character at position i:
-  - Convert to 0-94 range (printable chars)
-  - Calculate dynamic key: k = (serial_ID[i] + i * 31) % 95
-  - Apply formula: e = ((c + k) * (c + k)) % 95
-  - Convert back to printable ASCII
-```
-
-**Key Features:**
-- 🔄 **Reversible**: Same key decrypts the data
-- 📊 **Printable**: All output characters are ASCII 32-126
-- 🎲 **Position-Based**: Each character position affects encryption
-- 🆔 **Serial-Dependent**: Unique serial ID adds extra security layer
-
----
-
-## 📊 Vault File Format
-
-The `data/vault.dat` file stores entries in the following format:
-
-```
+Vault format (example):
+```text
 KEY | ENCRYPTED_VALUE
 ----------------------
-Github | xY9#mP...ID7k@2n
-Facebook | aB3$qZ...ID9m!5x
-Email | pQ1&rT...ID2c#8w
+github | 8`uU?yB75(sID8`gV@
 ```
 
-Each line contains:
-- **Key**: Your identifier for the password
-- **Encrypted Value**: The encrypted password
-- **Serial ID**: Appended with "ID" prefix (e.g., `ID7k@2n`)
+Here:
+- 🔑 KEY: github
+- 🔐 ENCRYPTED_VALUE: 8`uU?yB75(s – value encrypted twice
+- 🆔 Serial ID: 8`gV@ – 5‑character ID after the literal text "ID"
 
 ---
 
-## 🔧 Function Reference
+## 🧾 Usage – Main Program
 
-### Crypto Class
+General form:
+```bash
+./password_vault <KEY> <VALUE> <METHOD>
+```
 
-#### `encrypt(data, key)`
-Encrypts a password using dual-shift cipher and string reversal.
+- KEY: word that acts as the logical name for your password (and as encryption key).
+- VALUE: password or encrypted value, depending on METHOD.
+- METHOD:
+  - `ENC` – 🔒 encrypt and store in data/vault.dat
+  - `DEC` – 🔓 decrypt a value that has already had the serial‑ID layer removed
 
-**Parameters:**
-- `data` (string): The password to encrypt
-- `key` (string): The encryption key
+### 🔒 Encrypt and Store
 
-**Returns:** Encrypted string with printable characters only
+```bash
+./password_vault github "MySecretPass123!" ENC
+```
 
-**Algorithm:**
-1. Apply first shift based on key[0]
-2. Apply second shift based on key[last]
-3. Reverse the string
+Output:
+- 📂 Creates data/vault.dat if it does not exist.
+- ➕ Appends a line for the new entry.
+- ✅ Prints: "Encrypted value stored successfully."
 
----
+### 🔓 Decrypt (after removing serial layer)
 
-#### `decrypt(encryptedData, key)`
-Decrypts a password (requires pre-processing with serial ID).
+The main program expects VALUE to already be decrypted from the serial ID layer.
 
-**Parameters:**
-- `encryptedData` (string): The encrypted password
-- `key` (string): The same key used for encryption
+Steps:
+1. Take KEY and the encrypted+serial text from data/vault.dat.
+2. Remove the serial‑ID layer with the helper dec program (see below).
+3. Pass the result to password_vault with DEC.
 
-**Returns:** Decrypted password
+Example outline:
+```bash
+./password_vault github <value_without_serial_layer> DEC
+```
 
-**Note:** ⚠️ User must apply custom serial ID decryption before using this function
-
----
-
-### Utils Class
-
-#### `createFile(filename)`
-Creates a file if it doesn't exist.
-
-**Parameters:**
-- `filename` (string): Path to the file
-
-**Returns:** `true` if successful, `false` otherwise
+If everything is correct, it prints the original password.
 
 ---
 
-#### `addToFile(filename, key, encryptedValue, serialID)`
-Appends an encrypted password entry to the vault.
+## 🧩 Usage – dec Helper
 
-**Parameters:**
-- `filename` (string): Vault file path
-- `key` (string): Password identifier
-- `encryptedValue` (string): The encrypted password
-- `serialID` (string): Generated serial identifier
+The dec helper only reverses the serial‑ID layer used in Utils::encryption_algorithm.
 
-**Returns:** `true` if successful, `false` otherwise
+From dec/:
+```bash
+./run_dec.sh '<ENCRYPTED_PART>' '<SERIAL_ID>'
+```
 
-**Features:**
-- Auto-creates header if file is empty
-- Formats entry with key, encrypted value, and serial ID
+Where both arguments are taken from a line in data/vault.dat.
 
----
+Using the example line:
+```text
+github | 8`uU?yB75(sID8`gV@
+```
 
-#### `encreption_algorithm(value, serialID)`
-Applies an additional encryption layer using serial ID.
+- ENCRYPTED_PART: 8`uU?yB75(s
+- SERIAL_ID: 8`gV@
 
-**Parameters:**
-- `value` (string): Already encrypted password
-- `serialID` (string): Random serial identifier
+- SERIAL_ID: 8`gV@
+ 
+Run:
+```bash
+cd dec
+./run_dec.sh '8`uU?yB75(s' '8`gV@'
+```
 
-**Returns:** Double-encrypted password string
+This prints the decrypted value for that layer only. Use that output as VALUE with METHOD=DEC in password_vault:
+```bash
+./password_vault github '<output_from_dec>' DEC
+```
 
-**Algorithm:**
-- Uses position-based mathematical transformation
-- Incorporates serial ID for unique obfuscation
-- Ensures output remains in printable ASCII range
-
----
-
-#### `generateSerialIDs(length)`
-Generates a random serial identifier.
-
-**Parameters:**
-- `length` (size_t): Number of characters (default: 5)
-
-**Returns:** Random string of printable ASCII characters
+Note for zsh users:
+- Wrap values in single quotes when they contain backticks, ?, (, etc.
 
 ---
 
-## ⚙️ Makefile Targets
+## 📁 Files
 
-| Target | Description | Emoji |
-|--------|-------------|-------|
-| `make` or `make all` | Build the executable | ✨ |
-| `make clean` | Remove object files | 🧹 |
-| `make fclean` | Remove all generated files | 🗑️ |
-| `make re` | Rebuild from scratch | 🔄 |
-
----
-
-## 🎯 Educational Goals
-
-This project is excellent for learning:
-
-- ✅ **File I/O Operations** - Using `fstream` for persistent storage
-- ✅ **String Manipulation** - Character shifting, reversal, and transformation
-- ✅ **Custom Algorithms** - Building encryption from scratch
-- ✅ **CLI Argument Handling** - Processing command-line inputs
-- ✅ **C++98 Standard** - Writing portable, standards-compliant code
-- ✅ **Memory Management** - Working with strings and vectors
-- ✅ **Modular Design** - Separating concerns into classes
+- 🧠 src/main.cpp – CLI handling, printing help, calling Crypto and Utils.
+- 🔐 src/Crypto.cpp – key‑based encrypt/decrypt (first layer).
+- 🛠️ src/Utils.cpp – vault file creation, appending entries, serial‑ID cipher, serial generation.
+- 📑 include/Crypto.hpp, include/Utils.hpp – headers.
+- 💾 data/vault.dat – created automatically on first run.
+- 🧩 dec/dec.cpp – tiny tool to undo the serial‑ID cipher.
+- 🤖 dec/run_dec.sh – script that builds and runs dec.
 
 ---
 
-## ⚠️ Security Notice
+## 👤 Author
 
-> **Important:** This is an educational project demonstrating basic encryption concepts. For production use, always rely on industry-standard encryption libraries like OpenSSL, libsodium, or similar.
-
-**Current Limitations:**
-- Custom encryption algorithm (not cryptographically secure)
-- Serial ID decryption requires external implementation
-- No password hashing for the encryption key
-- Vault file is not encrypted at rest
-
----
-
-## 🚀 Future Enhancements
-
-- [ ] Implement AES-256 encryption
-- [ ] Add password hashing (SHA-256, bcrypt)
-- [ ] Support for password searching by key
-- [ ] Delete/update existing entries
-- [ ] Master password for vault access
-- [ ] Export/import functionality
-- [ ] Automatic serial ID decryption integration
-
----
-
-## 📝 License
-
-This project is open source and available for educational purposes.
-
----
-
-## 👨‍💻 Author
-
-Created as a C++ learning project focusing on encryption, file I/O, and CLI development.
-
----
-
-**Happy Coding! 🔐✨**
-
-Structuring a secure password vault for a single user
-
-📈 Next Steps / Improvements
-
-Add multi-user support with separate vaults
-
-Implement double encryption for higher security
-
-Add password retrieval by key without requiring the encrypted value on CLI
-
-Add unit tests to ensure encryption/decryption correctness
-
-👨‍💻 Author
-
-Ayoub Adouay
-Student at 1337 (42 Network)
-Interested in systems programming, security, and low-level software design
-
-
-📝 License
-
-This project is open-source and educational. Free to use and modify.
+- 👨‍💻 Ayoub Adouay
+- 🎓 Student at 1337 (42 Network)
+- 🔍 Focused on systems programming and security‑oriented C++.

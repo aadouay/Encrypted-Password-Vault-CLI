@@ -3,8 +3,22 @@
 
 void decryptAndPrint(const std::string& encrypted_data, const std::string& serial_ID) {
     std::string decrypted;
-    // Simple decryption algorithm: Reverse of the Caesar cipher variant used in encryption
-    // std::cout << "Decrypted string: " << decrypted << std::endl;
+
+    size_t index = 0;
+
+    for (size_t i = 0; i < encrypted_data.size(); i++)
+    {
+        int shift = static_cast<int>(serial_ID[index]);
+
+        char c = encrypted_data[i];
+        char dec = 32 + ((c - 32 - shift + 95) % 95);
+        decrypted += dec;
+
+        index++;
+        if (index >= serial_ID.size())
+            index = 0;
+    }
+    std::cout << "decrypted value is : " << decrypted << std::endl;
 }
 
 int main(int ac, char** av) {
